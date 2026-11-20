@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import ServiceManagement
 
 public enum GlassStyle: String, CaseIterable, Identifiable {
     case crystal = "Crystal Clear"
@@ -58,7 +59,10 @@ public final class AppSettings: ObservableObject {
     }
 
     @Published public var startAtLogin: Bool {
-        didSet { UserDefaults.standard.set(startAtLogin, forKey: Keys.startAtLogin) }
+        didSet {
+            UserDefaults.standard.set(startAtLogin, forKey: Keys.startAtLogin)
+            updateLoginItem(startAtLogin)
+        }
     }
 
     private init() {
@@ -89,5 +93,22 @@ public final class AppSettings: ObservableObject {
         self.specularIntensity = def.double(forKey: Keys.specularIntensity)
         self.glowIntensity = def.double(forKey: Keys.glowIntensity)
         self.startAtLogin = def.bool(forKey: Keys.startAtLogin)
+    }
+
+    private func updateLoginItem(_ enable: Bool) {
+        if #available(macOS 13.0, *) {
+            do {
+                if enable {
+                    if SMAppService.mainApp.status == .enabled { return }
+                    try SMAppService.mainApp.register()
+                } else {
+                    if SMAppService.mainApp.status == .enabled {
+                        try SMAppService.mainApp.unregister()
+                    }
+                }
+            } catch {
+                print("Launch at login error: \(error.localizedDescription)")
+            }
+        }
     }
 }

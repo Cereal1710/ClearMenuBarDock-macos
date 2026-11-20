@@ -26,6 +26,7 @@ SOURCES=(
     Sources/Permissions/PermissionManager.swift
     Sources/UI/AppSettings.swift
     Sources/Wallpaper/WallpaperEngine.swift
+    Sources/Wallpaper/WallpaperBakeEngine.swift
     Sources/MenuBar/Scrim.swift
     Sources/MenuBar/MenuBarReader.swift
     Sources/MenuBar/ClearMenuBarEngine.swift
